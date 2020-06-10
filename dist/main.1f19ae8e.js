@@ -125,23 +125,23 @@ var xObject = JSON.parse(x); //把字符串重新变成对象
 
 var hashMap = xObject || [{
   logo: "G",
-  logoType: "text",
+  logoType: "image",
   url: "https://google.com"
 }, {
   logo: "G",
-  logoType: "text",
+  logoType: "image",
   url: "https://github.com"
 }, {
   logo: "U",
-  logoType: "text",
+  logoType: "image",
   url: "https://unsplash.com"
 }, {
   logo: "J",
-  logoType: "text",
+  logoType: "image",
   url: "https://juejin.im"
 }, {
   logo: "C",
-  logoType: "text",
+  logoType: "image",
   url: "https://colorhunt.co"
 }, {
   logo: "Z",
@@ -157,8 +157,18 @@ var simplifyUrl = function simplifyUrl(url) {
 var render = function render() {
   $siteList.find("li:not(.last)").remove(); //找到所有li但是不找最后一个li（last）然后清空
 
-  hashMap.forEach(function (node) {
-    var $li = $("<li>\n      <a href=\"".concat(node.url, "\">\n        <div class=\"site\">\n          <div class=\"logo\">").concat(node.logo, "</div>\n          <div class=\"link\">").concat(simplifyUrl(node.url), "</div>\n          <div class=\"close\">\n          <svg class=\"icon\">\n              <use xlink:href=\"#icon-close\"></use>\n          </svg>\n        </div>\n      </div>\n      </a>\n    </li>")).insertBefore($lastLi);
+  hashMap.forEach(function (node, index) {
+    //forEach会给两个参数一个是当前元素，一个是下标
+    var $li = $("<li>\n        <div class=\"site\">\n          <div class=\"logo\">".concat(node.logo, "</div>\n          <div class=\"link\">").concat(simplifyUrl(node.url), "</div>\n          <div class=\"close\">\n           <svg class=\"icon\">\n              <use xlink:href=\"#icon-close\"></use>\n          </svg>\n        </div>\n      </div>\n    </li>")).insertBefore($lastLi);
+    $li.on("click", function () {
+      window.open(node.url);
+    });
+    $li.on("click", ".close", function (e) {
+      e.stopPropagation(); //阻止眺转页面（冒泡）
+
+      hashMap.splice(index, 1);
+      render();
+    });
   });
 };
 
@@ -185,6 +195,17 @@ window.onbeforeunload = function () {
 
   window.localStorage.setItem("x", string);
 };
+
+$(document).on("keypress", function (e) {
+  var key = e.key; //const key=e.key
+  //键盘事件
+
+  for (var i = 0; i < hashMap.length; i++) {
+    if (hashMap[i].logo.toLowerCase() === key) {
+      window.open(hashMap[i].url);
+    }
+  }
+});
 },{}],"C:/Users/SK0101/AppData/Local/Yarn/Data/global/node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -213,7 +234,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60509" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58187" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
@@ -390,4 +411,4 @@ function hmrAcceptRun(bundle, id) {
   }
 }
 },{}]},{},["C:/Users/SK0101/AppData/Local/Yarn/Data/global/node_modules/parcel/src/builtins/hmr-runtime.js","main.js"], null)
-//# sourceMappingURL=dist/main.1f19ae8e.js.map
+//# sourceMappingURL=main.1f19ae8e.js.map

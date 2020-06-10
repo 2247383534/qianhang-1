@@ -3,11 +3,11 @@ const $lastLi = $siteList.find("li.last");
 const x = localStorage.getItem("x");
 const xObject = JSON.parse(x); //把字符串重新变成对象
 const hashMap = xObject || [
-  { logo: "G", logoType: "text", url: "https://google.com" },
-  { logo: "G", logoType: "text", url: "https://github.com" },
-  { logo: "U", logoType: "text", url: "https://unsplash.com" },
-  { logo: "J", logoType: "text", url: "https://juejin.im" },
-  { logo: "C", logoType: "text", url: "https://colorhunt.co" },
+  { logo: "G", logoType: "image", url: "https://google.com" },
+  { logo: "G", logoType: "image", url: "https://github.com" },
+  { logo: "U", logoType: "image", url: "https://unsplash.com" },
+  { logo: "J", logoType: "image", url: "https://juejin.im" },
+  { logo: "C", logoType: "image", url: "https://colorhunt.co" },
   {
     logo: "Z",
     logoType: "image",
@@ -25,20 +25,27 @@ const simplifyUrl = (url) => {
 };
 const render = () => {
   $siteList.find("li:not(.last)").remove(); //找到所有li但是不找最后一个li（last）然后清空
-  hashMap.forEach((node) => {
+  hashMap.forEach((node, index) => {
+    //forEach会给两个参数一个是当前元素，一个是下标
     const $li = $(`<li>
-      <a href="${node.url}">
         <div class="site">
           <div class="logo">${node.logo}</div>
           <div class="link">${simplifyUrl(node.url)}</div>
           <div class="close">
-          <svg class="icon">
+           <svg class="icon">
               <use xlink:href="#icon-close"></use>
           </svg>
         </div>
       </div>
-      </a>
     </li>`).insertBefore($lastLi);
+    $li.on("click", () => {
+      window.open(node.url);
+    });
+    $li.on("click", ".close", (e) => {
+      e.stopPropagation(); //阻止眺转页面（冒泡）
+      hashMap.splice(index, 1);
+      render();
+    });
   });
 };
 
@@ -63,3 +70,12 @@ window.onbeforeunload = () => {
   const string = JSON.stringify(hashMap); //将一个对象变成字符串
   window.localStorage.setItem("x", string);
 };
+$(document).on("keypress", (e) => {
+  const { key } = e; //const key=e.key
+  //键盘事件
+  for (let i = 0; i < hashMap.length; i++) {
+    if (hashMap[i].logo.toLowerCase() === key) {
+      window.open(hashMap[i].url);
+    }
+  }
+});
